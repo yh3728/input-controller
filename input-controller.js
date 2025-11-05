@@ -10,6 +10,7 @@ class InputController {
     constructor(actionsToBind, target){
         this.bindActions(actionsToBind);
         this.attach(target);
+        //сохраняю обработчики
         this.onKeyDown = (e) => this.keyDown(e);  
         this.onKeyUp = (e) =>this.keyUp(e);
     }
@@ -22,14 +23,10 @@ class InputController {
 
     bindActions(actionsToBind){
         for (const key of Object.keys(actionsToBind)){
-            if (!this.actions.hasOwnProperty(key)){
-                this.actions[key] = actionsToBind[key];
-                if (!this.actions[key].hasOwnProperty("enabled")){
-                    this.actions[key].enabled = false;
-                }
-            }
-            else {
-                //TODO добавить в keys коды которых тут нет 
+            //если второй раз биндим одно действие (по ключу то есть), то оно просто перезапишется
+            this.actions[key] = actionsToBind[key];
+            if (!this.actions[key].hasOwnProperty("enabled")){
+                this.actions[key].enabled = false;
             }
         }
     }
