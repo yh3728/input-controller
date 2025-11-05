@@ -43,10 +43,16 @@ class InputController {
         let code = e.keyCode;
         for (const [key, value] of Object.entries(this.actions)){
             let actCode = value.keys;
-            if (actCode.includes(code) && !this.actions[key].active){
-                this.enableAction(key);
-                this.pressedKeys.push(code);
-                return;
+            if (actCode.includes(code)){
+                if (!this.pressedKeys.includes(code)){
+                    this.pressedKeys.push(code);
+                    this.pressedKeys = [...(new Set(this.pressedKeys))];
+                }
+                if (!this.actions[key].active){
+                    this.enableAction(key);
+                    this.pressedKeys.push(code);
+                    return;
+                }
             } 
         }
     }
@@ -56,11 +62,18 @@ class InputController {
         for (const [key, value] of Object.entries(this.actions)){
             let actCode = value.keys;
             if (actCode.includes(code)){
-                if (this.isKeyPressed(code)){
-                    this.disableAction(key)
-                    this.pressedKeys = this.pressedKeys.filter((item)=> item !== code);
-                    return;
+                this.pressedKeys = this.pressedKeys.filter((item)=> item !== code);
+                let otherKeys = actCode.filter((item) => item !== code);
+
+                for (const other of otherKeys){
+                    if (this.isKeyPressed(other)){
+                        return;
+                    }
                 }
+                if (this.actions[key].active){
+                    this.disableAction(key);
+                    return;
+                } 
             } 
         }
     }
@@ -134,6 +147,7 @@ class InputController {
                 }
             }
         );
+        console.log("dispatched " + type);
         this.target.dispatchEvent(event);
     }
 
