@@ -10,6 +10,8 @@ class InputController {
     constructor(actionsToBind, target){
         this.bindActions(actionsToBind);
         this.attach(target);
+        this.onKeyDown = (e) => this.keyDown(e);  
+        this.onKeyUp = (e) =>this.keyUp(e);
     }
 
     /*
@@ -32,17 +34,19 @@ class InputController {
         }
     }
 
+
     addListeners(){
-        document.addEventListener('keydown', (e) => this.keyDown(e))
-        document.addEventListener('keyup', (e) => this.keyUp(e))
+        document.addEventListener('keydown', this.onKeyDown)
+        document.addEventListener('keyup', this.onKeyUp)
     }
 
     removeListeners(){
-        document.removeEventListener('keydown', (e) => this.keyDown(e))
-        document.removeEventListener('keyup', (e) => this.keyUp(e))
+        document.removeEventListener('keydown', this.onKeyDown)
+        document.removeEventListener('keyup', this.onKeyUp)
     }
 
     keyDown(e) {
+        console.log("key down");
         let code = e.keyCode;
         for (const [key, value] of Object.entries(this.actions)){
             let actCode = value.keys;
@@ -55,6 +59,7 @@ class InputController {
     }
 
     keyUp(e) {
+        console.log("key up");
         let code = e.keyCode;
         for (const [key, value] of Object.entries(this.actions)){
             let actCode = value.keys;
@@ -128,7 +133,6 @@ class InputController {
                 }
             }
         );
-        console.log("dispatching " + eventName);
         this.target.dispatchEvent(event);
     }
 
@@ -149,6 +153,7 @@ class InputController {
     */
 
     detach(){
+        this.removeListeners();
         this.target = null;
         this.enabled = false;
     }

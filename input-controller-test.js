@@ -1,6 +1,8 @@
-
-// btnsDiv = document.getElementById("input-test");
-// btns = btnsDiv.querrySelectorAll('*');
+let attachBtn = document.getElementById("attach");
+let detachBtn = document.getElementById("detach");
+let activateBtn = document.getElementById("activate-controller");
+let deactivateBtn = document.getElementById("deactivate-controller");
+let bindJumpBtn = document.getElementById("bind-jump");
 
 canvas = document.getElementById("test-canvas");
 ctx = canvas.getContext("2d");
@@ -25,6 +27,15 @@ let actionsToBind =
     }
 ;
 
+let actions = ["left", "right"];
+
+// space, W and arrow up
+let jumpBind = {
+    "jump":{
+        keys: [32, 38, 87]
+    }
+}
+
 function moveLeft() {
     x -= SPEED;
 }
@@ -40,23 +51,45 @@ function init(){
 
 // вешаем слушатели и обработчики 
 
-canvas.addEventListener(
-    InputController.ACTION_ACTIVATED,
-    (e) => {
-        console.log("activate" + e.detail.action)
+attachBtn.addEventListener('click', (e) => {
+    if (controller !== undefined){
+        controller.attach(canvas);
     }
-)
+})
 
-canvas.addEventListener(
-    InputController.ACTION_DEACTIVATED,
-    (e) => {
-        console.log("deactivate" + e.detail.action)
+detachBtn.addEventListener('click', (e) => {
+    if (controller !== undefined){
+        controller.detach();
     }
-)
+})
+
+activateBtn.addEventListener('click', (e) => {
+    controller.enabled = true;
+})
+
+deactivateBtn.addEventListener('click', (e) => {
+    if (controller !== undefined){
+        controller.enabled = false;
+    }
+})
+
+bindJumpBtn.addEventListener('click', (e) => {
+    if (controller !== undefined){
+        controller.bindActions(jumpBind);
+    }
+})
+
 
 function animate() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = "red";
+    if (controller.isActionActive("left"))
+        moveLeft();
+    if (controller.isActionActive("right"))
+        moveRight();
+    if (controller.isActionActive("jump")){
+        ctx.fillStyle = "blue";
+    }
     ctx.fillRect(x, y, WIDTH, HEIGHT)
     requestAnimationFrame(animate);
 }
