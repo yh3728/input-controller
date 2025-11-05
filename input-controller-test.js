@@ -41,14 +41,14 @@ function init(){
 // вешаем слушатели и обработчики 
 
 canvas.addEventListener(
-    controller.ACTION_ACTIVATED,
+    InputController.ACTION_ACTIVATED,
     (e) => {
         console.log("activate" + e.detail.action)
     }
 )
 
 canvas.addEventListener(
-    controller.ACTION_DEACTIVATED,
+    InputController.ACTION_DEACTIVATED,
     (e) => {
         console.log("deactivate" + e.detail.action)
     }
@@ -56,7 +56,6 @@ canvas.addEventListener(
 
 function animate() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    controller.focused = (document.activeElement === canvas)
     ctx.fillStyle = "red";
     ctx.fillRect(x, y, WIDTH, HEIGHT)
     requestAnimationFrame(animate);

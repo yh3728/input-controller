@@ -1,14 +1,15 @@
 class InputController {
     actions = {};
+    pressedKeys = [];
     target = document;
     enabled = true;
     focused = true;
-    ACTION_ACTIVATED = "input-controller:action-activated";
-    ACTION_DEACTIVATED = "input-controller:action-deactivated";
+    static ACTION_ACTIVATED = "input-controller:action-activated";
+    static ACTION_DEACTIVATED = "input-controller:action-deactivated";
 
     constructor(actionsToBind, target){
         this.bindActions(actionsToBind);
-        this.target = target;
+        this.attach(target);
     }
 
     /*
@@ -32,11 +33,38 @@ class InputController {
     }
 
     addListeners(){
-        for (let action in this.actions){
-            
+        document.addEventListener('keydown', (e) => this.keyDown(e))
+        document.addEventListener('keyup', (e) => this.keyUp(e))
+    }
+
+    removeListeners(){
+        document.removeEventListener('keydown', (e) => this.keyDown(e))
+        document.removeEventListener('keyup', (e) => this.keyUp(e))
+    }
+
+    keyDown(e) {
+        let code = e.keyCode;
+        for (const [key, value] of Object.entries(this.actions)){
+            let actCode = value.keys;
+            if (actCode.includes(code)){
+                this.enableAction(key);
+                this.pressedKeys.push(code);
+                return;
+            } 
         }
     }
 
+    keyUp(e) {
+        let code = e.keyCode;
+        for (const [key, value] of Object.entries(this.actions)){
+            let actCode = value.keys;
+            if (actCode.includes(code)){
+                this.disableAction(key)
+                this.pressedKeys = this.pressedKeys.filter((item)=> item !== code);
+                return;
+            } 
+        }
+    }
 
     /*
     Включает объявленную активность - включает генерацию событий для этой активности при изменении 
@@ -83,7 +111,15 @@ class InputController {
     диспатчит событие нужного типа
     */
     dispatchEvent(action, type) {
-        eventName = (type === "activate")? this.ACTION_ACTIVATED : this.ACTION_DEACTIVATED;
+        let eventName;
+        if (type === "activate"){
+            eventName = InputController.ACTION_ACTIVATED;
+        } 
+        else if (type === "deactivate"){
+            eventName= InputController.ACTION_DEACTIVATED;
+        } else {
+            return;
+        }
         const event = new CustomEvent(
             eventName,
             {
@@ -92,6 +128,7 @@ class InputController {
                 }
             }
         );
+        console.log("dispatching " + eventName);
         this.target.dispatchEvent(event);
     }
 
@@ -102,6 +139,7 @@ class InputController {
     */
 
     attach(target, dontEnable){
+        this.addListeners();
         this.target = target;
         this.enabled = !dontEnable;
     }
@@ -133,7 +171,7 @@ class InputController {
     */
 
     isKeyPressed(keyCode){
-        
+        return keyCode in this.pressedKeys;
     }
 
 }
