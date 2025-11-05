@@ -8,11 +8,11 @@ class InputController {
     static ACTION_DEACTIVATED = "input-controller:action-deactivated";
 
     constructor(actionsToBind, target){
-        this.bindActions(actionsToBind);
-        this.attach(target);
         //сохраняю обработчики
         this.onKeyDown = (e) => this.keyDown(e);  
         this.onKeyUp = (e) =>this.keyUp(e);
+        this.bindActions(actionsToBind);
+        this.attach(target);
     }
 
     /*
@@ -25,12 +25,9 @@ class InputController {
         for (const key of Object.keys(actionsToBind)){
             //если второй раз биндим одно действие (по ключу то есть), то оно просто перезапишется
             this.actions[key] = actionsToBind[key];
-            if (!this.actions[key].hasOwnProperty("enabled")){
-                this.actions[key].enabled = false;
-            }
+            this.actions[key].active = false;
         }
     }
-
 
     addListeners(){
         document.addEventListener('keydown', this.onKeyDown)
@@ -43,11 +40,10 @@ class InputController {
     }
 
     keyDown(e) {
-        console.log("key down");
         let code = e.keyCode;
         for (const [key, value] of Object.entries(this.actions)){
             let actCode = value.keys;
-            if (actCode.includes(code)){
+            if (actCode.includes(code) && !this.actions[key].active){
                 this.enableAction(key);
                 this.pressedKeys.push(code);
                 return;
@@ -56,14 +52,15 @@ class InputController {
     }
 
     keyUp(e) {
-        console.log("key up");
         let code = e.keyCode;
         for (const [key, value] of Object.entries(this.actions)){
             let actCode = value.keys;
             if (actCode.includes(code)){
-                this.disableAction(key)
-                this.pressedKeys = this.pressedKeys.filter((item)=> item !== code);
-                return;
+                if (this.isKeyPressed(code)){
+                    this.disableAction(key)
+                    this.pressedKeys = this.pressedKeys.filter((item)=> item !== code);
+                    return;
+                }
             } 
         }
     }
@@ -83,10 +80,13 @@ class InputController {
             if (!this.actions.hasOwnProperty(actionName)){
                 return;
             }
-            if (!this.actions[actionName].enabled)
-                this.actions[actionName].enabled = true;
-
+            if (this.actions[actionName].enabled === false){
+                return;
+            }
+            if (!this.actions[actionName].active){
+                this.actions[actionName].active = true;
                 this.dispatchEvent(actionName, "activate")
+            }
         }
     }
 
@@ -102,9 +102,13 @@ class InputController {
             if (!this.actions.hasOwnProperty(actionName)){
                 return;
             }
-            if (this.actions[actionName].enabled)
-                this.actions[actionName].enabled = false;
+            if (this.actions[actionName].enabled === false){
+                return;
+            }
+            if (this.actions[actionName].active){
+                this.actions[actionName].active = false;
                 this.dispatchEvent(actionName, "deactivate")
+            }
         }
     }
 
@@ -162,7 +166,12 @@ class InputController {
 
     isActionActive(action){
         if (this.actions.hasOwnProperty(action))
-            return this.actions[action].enabled;
+        {
+            if (this.actions[action].enabled === false){
+                return false;
+            }
+            return this.actions[action].active;
+        }
         else 
             return false;
     }
@@ -173,7 +182,7 @@ class InputController {
     */
 
     isKeyPressed(keyCode){
-        return keyCode in this.pressedKeys;
+        return this.pressedKeys.includes(keyCode);
     }
 
 }
