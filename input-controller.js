@@ -8,9 +8,10 @@ class InputController {
     static ACTION_DEACTIVATED = "input-controller:action-deactivated";
 
     constructor(actionsToBind, target){
-        //сохраняю обработчики
-        this.onKeyDown = (e) => this.keyDown(e);  
-        this.onKeyUp = (e) =>this.keyUp(e);
+        this.onKeyDown = this.keyDown.bind(this);
+        this.onKeyUp =  this.keyUp.bind(this);
+        this.onBlur = this.blurHandle.bind(this);
+        this.onFocus = this.focuseHandle.bind(this);
         this.bindActions(actionsToBind);
         this.attach(target);
     }
@@ -30,13 +31,25 @@ class InputController {
     }
 
     addListeners(){
-        document.addEventListener('keydown', this.onKeyDown)
-        document.addEventListener('keyup', this.onKeyUp)
+        document.addEventListener('keydown', this.onKeyDown);
+        document.addEventListener('keyup', this.onKeyUp);
+        window.addEventListener('blur', this.onBlur);
+        window.addEventListener('focus', this.onFocus);
     }
 
     removeListeners(){
-        document.removeEventListener('keydown', this.onKeyDown)
-        document.removeEventListener('keyup', this.onKeyUp)
+        document.removeEventListener('keydown', this.onKeyDown);
+        document.removeEventListener('keyup', this.onKeyUp);
+        window.removeEventListener('blur', this.onBlur);
+        window.removeEventListener('focus', this.onFocus);
+    }
+
+    blurHandle(){
+        this.focused = false;
+    }
+
+    focuseHandle(){
+        this.focused = true;
     }
 
     keyDown(e) {

@@ -78,7 +78,7 @@ bindJumpBtn.addEventListener('click', (e) => {
 
 function animate() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    controller.focused = document.hasFocus();
+    
     ctx.fillStyle = "red";
     if (controller.isActionActive("left"))
         moveLeft();
