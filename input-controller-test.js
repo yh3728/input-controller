@@ -18,13 +18,13 @@ let actionsToBind =
         "left":
         {
             device: {
-                keyboard: [37,65],
+                keyboard: [37, 65],
             }
         },
         "right":
         {
             device:{
-                keyboard: [39,68],
+                keyboard: [39, 68],
             }
         }
     }
@@ -38,8 +38,6 @@ let jumpBind = {
             }
     }
 }
-
-
 
 function moveLeft() {
     x -= SPEED;
@@ -61,33 +59,33 @@ function init(){
 
 function addListeners(){
 
-attachBtn.addEventListener('click', (e) => {
-    if (controller !== undefined){
-        controller.attach(canvas);
-    }
-})
+    attachBtn.addEventListener('click', (e) => {
+        if (controller !== undefined){
+            controller.attach(canvas);
+        }
+    })
 
-detachBtn.addEventListener('click', (e) => {
-    if (controller !== undefined){
-        controller.detach();
-    }
-})
+    detachBtn.addEventListener('click', (e) => {
+        if (controller !== undefined){
+            controller.detach();
+        }
+    })
 
-activateBtn.addEventListener('click', (e) => {
-    controller.enabled = true;
-})
+    activateBtn.addEventListener('click', (e) => {
+        controller.enabled = true;
+    })
 
-deactivateBtn.addEventListener('click', (e) => {
-    if (controller !== undefined){
-        controller.enabled = false;
-    }
-})
+    deactivateBtn.addEventListener('click', (e) => {
+        if (controller !== undefined){
+            controller.enabled = false;
+        }
+    })
 
-bindJumpBtn.addEventListener('click', (e) => {
-    if (controller !== undefined){
-        controller.bindActions(jumpBind);
-    }
-})
+    bindJumpBtn.addEventListener('click', (e) => {
+        if (controller !== undefined){
+            controller.bindActions(jumpBind);
+        }
+    })
 }
 
 function animate() {
