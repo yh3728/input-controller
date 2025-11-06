@@ -1,5 +1,5 @@
 
-class devicePlugin {
+class DevicePlugin {
     actions = {};
     DEVICE_NAME;
     constructor(){

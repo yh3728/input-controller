@@ -34,7 +34,14 @@ let jumpBind = {
     "jump":{
         device:{
                 keyboard: [32, 38, 87],
-                mouse: [1]
+                mouse: [1],
+                gyroscope: [
+                    {
+                        xTilt: 45,
+                        // для гироскопа указываю градус, после которого событие активируется, например
+                        
+                    }
+                ]
             }
     }
 }
@@ -51,8 +58,10 @@ function init(){
     controller = new InputController(actionsToBind, canvas);
     kbPlugin = new KeyboardPlugin();
     mPlugin = new MousePlugin();
+    gPlugin = new GyroscopePlugin();
     controller.addPlugin(kbPlugin);
     controller.addPlugin(mPlugin);
+    controller.addPlugin(gPlugin);
 }
 
 // вешаем слушатели и обработчики 

@@ -1,5 +1,4 @@
-class MousePlugin extends devicePlugin{
-    actions = {};
+class MousePlugin extends DevicePlugin{
     DEVICE_NAME = 'mouse';
 
     bindHandlers(){

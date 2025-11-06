@@ -1,5 +1,4 @@
-class KeyboardPlugin extends devicePlugin {
-    actions = {};
+class KeyboardPlugin extends DevicePlugin {
     DEVICE_NAME = 'keyboard';
 
     bindHandlers(){
