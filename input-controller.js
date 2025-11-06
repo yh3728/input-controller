@@ -1,6 +1,8 @@
 class InputController {
     actions = {};
     pressedKeys = [];
+    plugins =[];
+    devices = [];
     target = document;
     enabled = true;
     focused = true;
@@ -8,8 +10,6 @@ class InputController {
     static ACTION_DEACTIVATED = "input-controller:action-deactivated";
 
     constructor(actionsToBind, target){
-        this.onKeyDown = this.keyDown.bind(this);
-        this.onKeyUp =  this.keyUp.bind(this);
         this.onBlur = this.blurHandle.bind(this);
         this.onFocus = this.focuseHandle.bind(this);
         this.bindActions(actionsToBind);
@@ -23,25 +23,37 @@ class InputController {
     */
 
     bindActions(actionsToBind){
+        for (const plugin of this.plugins){
+            plugin.bindActions(actionsToBind);
+        }
         for (const key of Object.keys(actionsToBind)){
-            //если второй раз биндим одно действие (по ключу то есть), то оно просто перезапишется
             this.actions[key] = actionsToBind[key];
             this.actions[key].active = false;
         }
     }
-
+    
     addListeners(){
-        document.addEventListener('keydown', this.onKeyDown);
-        document.addEventListener('keyup', this.onKeyUp);
         window.addEventListener('blur', this.onBlur);
         window.addEventListener('focus', this.onFocus);
     }
 
     removeListeners(){
-        document.removeEventListener('keydown', this.onKeyDown);
-        document.removeEventListener('keyup', this.onKeyUp);
         window.removeEventListener('blur', this.onBlur);
         window.removeEventListener('focus', this.onFocus);
+    }
+
+    addPlugin(plugin){
+        this.plugins.push(plugin);
+        this.devices.push(plugin.DEVICE_NAME)
+        plugin.controller = this;
+        plugin.bindActions(actionsToBind);
+    }
+
+    removePlugin(plugin){
+        this.plugins = this.plugins.filter(p => p !== plugin);
+        this.devices = this.devices.filter(d => d !== plugin.DEVICE_NAME);
+        plugin.controller = null;
+        plugin.unbindActions();
     }
 
     blurHandle(){
@@ -50,45 +62,6 @@ class InputController {
 
     focuseHandle(){
         this.focused = true;
-    }
-
-    keyDown(e) {
-        let code = e.keyCode;
-        for (const [key, value] of Object.entries(this.actions)){
-            let actCode = value.keys;
-            if (actCode.includes(code)){
-                if (!this.pressedKeys.includes(code)){
-                    this.pressedKeys.push(code);
-                    this.pressedKeys = [...(new Set(this.pressedKeys))];
-                }
-                if (!this.actions[key].active){
-                    this.enableAction(key);
-                    this.pressedKeys.push(code);
-                    return;
-                }
-            } 
-        }
-    }
-
-    keyUp(e) {
-        let code = e.keyCode;
-        for (const [key, value] of Object.entries(this.actions)){
-            let actCode = value.keys;
-            if (actCode.includes(code)){
-                this.pressedKeys = this.pressedKeys.filter((item)=> item !== code);
-                let otherKeys = actCode.filter((item) => item !== code);
-
-                for (const other of otherKeys){
-                    if (this.isKeyPressed(other)){
-                        return;
-                    }
-                }
-                if (this.actions[key].active){
-                    this.disableAction(key);
-                    return;
-                } 
-            } 
-        }
     }
 
     /*
@@ -212,5 +185,14 @@ class InputController {
         return this.pressedKeys.includes(keyCode);
     }
 
+    getActionKeys(actionName){
+        let keys = [];
+        if (!Object.keys(this.actions).includes(actionName)){
+            return;
+        }
+        for (const [device, value] of Object.entries(this.actions[actionName].device)){
+            keys.push(...(value.map(v => formatKeyName(device, v))));
+        }
+        return keys;
+    }
 }
-

@@ -13,26 +13,33 @@ const HEIGHT = 60;
 const SPEED = 15;
 
 let controller;
-
 let actionsToBind = 
     {
         "left":
         {
-            keys: [37,65],
+            device: {
+                keyboard: [37,65],
+            }
         },
         "right":
         {
-            keys: [39,68],
+            device:{
+                keyboard: [39,68],
+            }
         }
     }
 ;
 
-// space, W and arrow up
 let jumpBind = {
     "jump":{
-        keys: [32, 38, 87]
+        device:{
+                keyboard: [32, 38, 87],
+                mouse: [1]
+            }
     }
 }
+
+
 
 function moveLeft() {
     x -= SPEED;
@@ -44,9 +51,15 @@ function moveRight(){
 
 function init(){
     controller = new InputController(actionsToBind, canvas);
+    kbPlugin = new KeyboardPlugin();
+    mPlugin = new MousePlugin();
+    controller.addPlugin(kbPlugin);
+    controller.addPlugin(mPlugin);
 }
 
 // вешаем слушатели и обработчики 
+
+function addListeners(){
 
 attachBtn.addEventListener('click', (e) => {
     if (controller !== undefined){
@@ -75,6 +88,7 @@ bindJumpBtn.addEventListener('click', (e) => {
         controller.bindActions(jumpBind);
     }
 })
+}
 
 function animate() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -91,5 +105,6 @@ function animate() {
     requestAnimationFrame(animate);
 }
 
+addListeners();
 init();
 animate();
