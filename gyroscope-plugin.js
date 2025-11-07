@@ -1,25 +1,33 @@
 
-class GyroscopePlugin{
+class GyroscopePlugin extends DevicePlugin{
     DEVICE_NAME = 'gyroscope'
+
 
     bindHandlers(){
         this.onTilt = this.tilt.bind(this);
     }
 
     addListeners(){
-        document.addEventListener('deviceorientation ', this.onTilt);
+        window.addEventListener('deviceorientation', this.onTilt);
     }
 
-    removeListeners(){
-        document.removeEventListener('deviceorientation ', this.onTilt);
+    removeListeners(){ 
+        window.removeEventListener('deviceorientation ', this.onTilt);
     }
 
     tilt(e) {
-        // Код, который даю событию
-        let xTilt = e.gamma;
-        console.out(xTilt)
-        // let code = formatKeyName(this.DEVICE_NAME, e.keyCode);
-        // this.handleStartEvent(code);
+        let betaTilt = e.beta;
+        
+        if (betaTilt < 90){
+            let code = formatKeyName(this.DEVICE_NAME, "bTiltLess90");
+            this.handleStartEvent(code);
+        }
+        else if (betaTilt >=90){
+            let code = formatKeyName(this.DEVICE_NAME, "bTiltLess90")
+            this.handleEndEvent(code);
+        }
     }
+
+
 
 }

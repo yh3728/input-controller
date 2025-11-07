@@ -7,6 +7,18 @@ class DevicePlugin {
         this.addListeners();
     }
 
+    addListeners(){
+        
+    }
+
+    removeListeners(){
+        
+    }
+
+    bindHandlers(){
+        
+    }
+
     bindActions(actionsToBind){
         for (const key of Object.keys(actionsToBind)){
             if (!actionsToBind[key].device[this.DEVICE_NAME]){
@@ -22,18 +34,6 @@ class DevicePlugin {
     unbindActions(){
         this.actions = {};
         this.removeListeners();
-    }
-
-    addListeners(){
-        
-    }
-
-    removeListeners(){
-        
-    }
-
-    bindHandlers(){
-        
     }
 
     handleStartEvent(code){

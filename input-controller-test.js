@@ -35,13 +35,7 @@ let jumpBind = {
         device:{
                 keyboard: [32, 38, 87],
                 mouse: [1],
-                gyroscope: [
-                    {
-                        xTilt: 45,
-                        // для гироскопа указываю градус, после которого событие активируется, например
-                        
-                    }
-                ]
+                gyroscope: ["bTiltLess90"]
             }
     }
 }
@@ -95,6 +89,8 @@ function addListeners(){
             controller.bindActions(jumpBind);
         }
     })
+
+   
 }
 
 function animate() {

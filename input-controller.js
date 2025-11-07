@@ -57,6 +57,9 @@ class InputController {
     }
 
     blurHandle(){
+        for (const key of Object.keys(this.actions)){
+            this.disableAction(key);
+        }
         this.focused = false;
     }
 
@@ -74,8 +77,9 @@ class InputController {
     actionName <string> : название активности
     */
 
+    //ДОБАВИТЬ В ПРОВЕРКУ ФОКУС
     enableAction(actionName){
-        if (this.enabled && this.focused){
+        if (this.enabled){
             if (!this.actions.hasOwnProperty(actionName)){
                 return;
             }
@@ -95,9 +99,10 @@ class InputController {
         false. А также при изменении состояния активности, события не генерируются.
         actionName <string> : название активности
     */
-
+   
+    //ДОБАВИТЬ В ПРОВЕРКУ ФОКУС
     disableAction(actionName){
-        if (this.enabled && this.focused){
+        if (this.enabled){
             if (!this.actions.hasOwnProperty(actionName)){
                 return;
             }
